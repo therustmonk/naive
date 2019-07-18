@@ -1,19 +1,19 @@
 #![feature(async_await, async_closure)]
 
 use failure::{err_msg, Error};
-use futures::{Stream as _};
-use futures3::{Sink, SinkExt, Stream, StreamExt};
+use futures::Stream as _;
 use futures3::compat::{Future01CompatExt, Sink01CompatExt, Stream01CompatExt};
+use futures3::{Sink, SinkExt, Stream, StreamExt};
 use serde_json::Value;
 use std::borrow::Borrow;
 use std::pin::Pin;
 use tokio_tungstenite::connect_async;
-use tungstenite::Message;
 use tungstenite::error::Error as WsError;
+use tungstenite::Message;
 use url::Url;
 
 pub struct WebSocket {
-    sink: Pin<Box<dyn Sink<Message, Error=WsError> + Send>>,
+    sink: Pin<Box<dyn Sink<Message, Error = WsError> + Send>>,
     stream: Pin<Box<dyn Stream<Item = Result<Message, WsError>> + Send>>,
 }
 
@@ -24,10 +24,7 @@ impl WebSocket {
         let (sink, stream) = ws_stream.split();
         let (sink, stream) = (sink.sink_compat(), stream.compat());
         let (sink, stream) = (Box::pin(sink), Box::pin(stream));
-        Ok(Self {
-            sink,
-            stream,
-        })
+        Ok(Self { sink, stream })
     }
 
     pub async fn send(&mut self, value: impl Borrow<Value>) -> Result<(), Error> {
@@ -50,9 +47,7 @@ impl WebSocket {
                     let value = serde_json::from_slice(&data)?;
                     return Ok(value);
                 }
-                Message::Ping(_) |
-                Message::Pong(_) => {
-                }
+                Message::Ping(_) | Message::Pong(_) => {}
                 Message::Close(_) => {
                     return Err(err_msg("wsbsocket closed"));
                 }
@@ -60,4 +55,3 @@ impl WebSocket {
         }
     }
 }
-

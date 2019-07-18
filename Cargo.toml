@@ -2,6 +2,8 @@
 name = "naive"
 version = "0.1.0"
 authors = ["Denis Kolodin <deniskolodin@gmail.com>"]
+description = "HTTP/WS async/await compatible very simple client"
+license = "MIT/Apache-2.0"
 edition = "2018"
 
 [dependencies]
